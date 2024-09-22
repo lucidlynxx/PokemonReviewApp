@@ -483,5 +483,14 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-#Ignore vs and files
+# Ignore vs and files
 vs/
+.vs/
+.vscode/
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+**/docker-compose.override.yml
