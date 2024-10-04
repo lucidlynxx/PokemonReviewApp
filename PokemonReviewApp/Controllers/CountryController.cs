@@ -6,11 +6,13 @@ using PokemonReviewApp.Models;
 using PokemonReviewApp.Wrappers;
 using PokemonReviewApp.Filter;
 using PokemonReviewApp.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PokemonReviewApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CountryController : Controller
 {
     private readonly ICountryRepository _countryRepository;
@@ -26,6 +28,7 @@ public class CountryController : Controller
         _ownerRepository = ownerRepository;
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Country>))]
     public async Task<IActionResult> GetCountries([FromQuery] PaginationFilter filter)
@@ -55,6 +58,7 @@ public class CountryController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{countryId}")]
     [ProducesResponseType(200, Type = typeof(Country))]
     [ProducesResponseType(400)]
@@ -71,6 +75,7 @@ public class CountryController : Controller
         return Ok(new Response<CountryDto>(country));
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("/api/Country/Owner/{ownerId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(200, Type = typeof(Country))]
@@ -87,6 +92,7 @@ public class CountryController : Controller
         return Ok(new Response<CountryDto>(country));
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{countryId}/Owners")]
     [ProducesResponseType(400)]
     [ProducesResponseType(200, Type = typeof(ICollection<Owner>))]
@@ -120,6 +126,7 @@ public class CountryController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -150,6 +157,7 @@ public class CountryController : Controller
         return Ok("Successfully created");
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{countryId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
@@ -179,6 +187,7 @@ public class CountryController : Controller
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("{countryId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]

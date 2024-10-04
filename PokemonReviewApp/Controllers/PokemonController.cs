@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Filter;
@@ -11,6 +12,7 @@ namespace PokemonReviewApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class PokemonController : Controller
 {
     private readonly IPokemonRepository _pokemonRepository;
@@ -26,6 +28,7 @@ public class PokemonController : Controller
         _uriService = uriService;
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     public async Task<IActionResult> GetPokemons([FromQuery] PaginationFilter filter)
@@ -55,6 +58,7 @@ public class PokemonController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("/api/PokemonsWithCategories")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<PokemonsWithCategoriesDto>))]
     public async Task<IActionResult> GetPokemonsWithCategories([FromQuery] PaginationFilter filter)
@@ -84,6 +88,7 @@ public class PokemonController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{pokeId}")]
     [ProducesResponseType(200, Type = typeof(Pokemon))]
     [ProducesResponseType(400)]
@@ -100,6 +105,7 @@ public class PokemonController : Controller
         return Ok(new Response<PokemonDto>(pokemon));
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{pokeId}/Rating")]
     [ProducesResponseType(200, Type = typeof(decimal))]
     [ProducesResponseType(400)]
@@ -116,6 +122,7 @@ public class PokemonController : Controller
         return Ok(new Response<decimal>(rating));
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -146,6 +153,7 @@ public class PokemonController : Controller
         return Ok("Successfully created");
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{pokeId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
@@ -175,6 +183,7 @@ public class PokemonController : Controller
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("{pokemonId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]

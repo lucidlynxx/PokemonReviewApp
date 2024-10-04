@@ -6,11 +6,13 @@ using PokemonReviewApp.Models;
 using PokemonReviewApp.Wrappers;
 using PokemonReviewApp.Filter;
 using PokemonReviewApp.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PokemonReviewApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class OwnerController : Controller
 {
     private readonly IOwnerRepository _ownerRepository;
@@ -28,6 +30,7 @@ public class OwnerController : Controller
         _uriService = uriService;
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Owner>))]
     public async Task<IActionResult> GetOwners([FromQuery] PaginationFilter filter)
@@ -57,6 +60,7 @@ public class OwnerController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("/api/OwnersWithCountries")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<OwnersWithCountriesDto>))]
     public async Task<IActionResult> GetOwnersWithCountries([FromQuery] PaginationFilter filter)
@@ -86,6 +90,7 @@ public class OwnerController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("/api/OwnersWithPokemons")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<OwnersWithPokemonsDto>))]
     public async Task<IActionResult> GetOwnersWithPokemons([FromQuery] PaginationFilter filter)
@@ -115,6 +120,7 @@ public class OwnerController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{ownerId}")]
     [ProducesResponseType(200, Type = typeof(Owner))]
     [ProducesResponseType(400)]
@@ -131,6 +137,7 @@ public class OwnerController : Controller
         return Ok(new Response<OwnerDto>(owner));
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{ownerId}/Pokemons")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     [ProducesResponseType(400)]
@@ -164,6 +171,7 @@ public class OwnerController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("/api/Owners/Pokemon/{pokeId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Owner>))]
     [ProducesResponseType(400)]
@@ -197,6 +205,7 @@ public class OwnerController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -229,6 +238,7 @@ public class OwnerController : Controller
         return Ok("Successfully created");
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{ownerId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
@@ -258,6 +268,7 @@ public class OwnerController : Controller
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("{ownerId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]

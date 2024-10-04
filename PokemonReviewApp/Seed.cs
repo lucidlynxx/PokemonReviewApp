@@ -685,6 +685,29 @@ public class Seed
                 });
             }
 
+            List<User> users = new List<User>()
+            {
+                new User {
+                    Username = "admin",
+                    Password = BCrypt.Net.BCrypt.HashPassword("password", workFactor: 4),
+                    Email = "admin@Example.com",
+                    Roles = new List<string> { "admin" }
+                },
+                new User {
+                    Username = "user",
+                    Password = BCrypt.Net.BCrypt.HashPassword("password", workFactor: 4),
+                    Email = "user@Example.com",
+                    Roles = new List<string> { "user" }
+                },
+                new User {
+                    Username = "moderator",
+                    Password = BCrypt.Net.BCrypt.HashPassword("password", workFactor: 4),
+                    Email = "moderator@Example.com",
+                    Roles = new List<string> { "moderator" }
+                },
+            };
+
+            dataContext.Users.AddRange(users);
             dataContext.Pokemon.AddRange(pokemons);
             dataContext.Categories.AddRange(categories);
             dataContext.Owners.AddRange(ownersAndCountry);

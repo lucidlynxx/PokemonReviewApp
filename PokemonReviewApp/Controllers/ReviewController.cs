@@ -6,11 +6,13 @@ using PokemonReviewApp.Models;
 using PokemonReviewApp.Wrappers;
 using PokemonReviewApp.Filter;
 using PokemonReviewApp.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PokemonReviewApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ReviewController : Controller
 {
     private readonly IReviewRepository _reviewRepository;
@@ -28,6 +30,7 @@ public class ReviewController : Controller
         _uriService = uriService;
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
     public async Task<IActionResult> GetReviews([FromQuery] PaginationFilter filter)
@@ -57,6 +60,7 @@ public class ReviewController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{reviewId}")]
     [ProducesResponseType(200, Type = typeof(Review))]
     [ProducesResponseType(400)]
@@ -73,6 +77,7 @@ public class ReviewController : Controller
         return Ok(new Response<ReviewDto>(review));
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("Pokemon/{pokeId}")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
     [ProducesResponseType(400)]
@@ -106,6 +111,7 @@ public class ReviewController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("/api/ReviewsWithReviewerAndPokemon")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewsWithReviewerAndPokemonDto>))]
     public async Task<IActionResult> GetReviewsWithReviewerAndPokemon([FromQuery] PaginationFilter filter)
@@ -135,6 +141,7 @@ public class ReviewController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "ModeratorOnly")]
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -168,6 +175,7 @@ public class ReviewController : Controller
         return Ok("Successfully created");
     }
 
+    [Authorize(Policy = "ModeratorOnly")]
     [HttpPut("{reviewId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
@@ -197,6 +205,7 @@ public class ReviewController : Controller
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly,ModeratorOnly")]
     [HttpDelete("{reviewId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Filter;
@@ -11,6 +12,7 @@ namespace PokemonReviewApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CategoryController : Controller
 {
     private readonly ICategoryRepository _categoryRepository;
@@ -24,6 +26,7 @@ public class CategoryController : Controller
         _uriService = uriService;
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
     public async Task<IActionResult> GetCategories([FromQuery] PaginationFilter filter)
@@ -53,6 +56,7 @@ public class CategoryController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{categoryId}")]
     [ProducesResponseType(200, Type = typeof(Category))]
     [ProducesResponseType(400)]
@@ -69,6 +73,7 @@ public class CategoryController : Controller
         return Ok(new Response<CategoryDto>(category));
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{categoryId}/Pokemons")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     [ProducesResponseType(400)]
@@ -102,6 +107,7 @@ public class CategoryController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -114,7 +120,7 @@ public class CategoryController : Controller
 
         if (category != null)
         {
-            ModelState.AddModelError("", "Category already exists");
+            ModelState.AddModelError("", "Category already exists.");
             return StatusCode(422, ModelState);
         }
 
@@ -132,6 +138,7 @@ public class CategoryController : Controller
         return Ok("Successfully created");
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{categoryId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
@@ -161,6 +168,7 @@ public class CategoryController : Controller
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOny")]
     [HttpDelete("{categoryId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
@@ -168,9 +176,7 @@ public class CategoryController : Controller
     public async Task<IActionResult> DeleteCategory(int categoryId)
     {
         if (!await _categoryRepository.CategoryExists(categoryId))
-        {
             return NotFound();
-        }
 
         var categoryToDelete = await _categoryRepository.GetCategory(categoryId);
 

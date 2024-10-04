@@ -6,11 +6,13 @@ using PokemonReviewApp.Models;
 using PokemonReviewApp.Wrappers;
 using PokemonReviewApp.Filter;
 using PokemonReviewApp.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PokemonReviewApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ReviewerController : Controller
 {
     private readonly IReviewerRepository _reviewerRepository;
@@ -24,6 +26,7 @@ public class ReviewerController : Controller
         _uriService = uriService;
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Reviewer>))]
     public async Task<IActionResult> GetReviewers([FromQuery] PaginationFilter filter)
@@ -53,6 +56,7 @@ public class ReviewerController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{reviewerId}")]
     [ProducesResponseType(200, Type = typeof(Reviewer))]
     [ProducesResponseType(400)]
@@ -69,6 +73,7 @@ public class ReviewerController : Controller
         return Ok(new Response<ReviewerDto>(reviewer));
     }
 
+    [Authorize(Policy = "UserOnly")]
     [HttpGet("{reviewerId}/Reviews")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
     [ProducesResponseType(400)]
@@ -102,6 +107,7 @@ public class ReviewerController : Controller
         return Ok(pagedResponse);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -132,6 +138,7 @@ public class ReviewerController : Controller
         return Ok("Successfully created");
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{reviewerId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]
@@ -161,6 +168,7 @@ public class ReviewerController : Controller
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("{reviewerId}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(204)]

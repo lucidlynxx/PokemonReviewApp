@@ -14,5 +14,6 @@ public class MappingProfiles : Profile
         CreateMap<Owner, OwnerDto>().ReverseMap();
         CreateMap<Review, ReviewDto>().ReverseMap();
         CreateMap<Reviewer, ReviewerDto>().ReverseMap();
+        CreateMap<User, UserDto>().ReverseMap();
     }
 }
